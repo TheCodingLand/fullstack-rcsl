@@ -7,6 +7,7 @@ from .models import Call
 class CallType(DjangoObjectType):
     class Meta:
         model = Call
+        
 
 
 class Query(graphene.AbstractType):
