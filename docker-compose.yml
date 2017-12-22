@@ -1,0 +1,64 @@
+version: '2.1'
+
+services:
+ 
+ web:
+  restart: always
+  build: ./web/
+  expose:
+    - "8000"
+  links:
+    - postgres:postgres
+    - redis:redis
+  env_file: env
+  working_dir: /data/web/mydjango
+  volumes:
+    - ./web:/data/web
+  command: /usr/bin/gunicorn mydjango.wsgi:application -w 2 -b :8000
+  
+ nginx:
+  restart: always
+  build: ./nginx/
+  ports:
+    - "8092:80"
+  volumes_from:
+    - web
+  links:
+    - web:web
+
+ postgres:
+  restart: always
+  image: postgres:latest
+  volumes_from:
+    - data
+  volumes:
+    - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    - ./backups/postgresql:/backup
+  env_file:
+    - env
+  expose:
+    - "5432"
+
+ php-redis-admin:
+  image: faktiva/php-redis-admin
+  container_name: pra
+  environment:
+   - PHPREDMIN_DATABASE_REDIS_0_HOST=redis
+  ports:
+   - "8093:80"
+  depends_on:
+   - redis
+    
+ redis:
+  restart: always
+  image: redis:latest
+  expose:
+    - "6379"
+  volumes:
+   - ./redis:/data
+ data:
+  restart: always
+  image: alpine
+  volumes:
+    - /var/lib/postgresql
+  command: "true"
