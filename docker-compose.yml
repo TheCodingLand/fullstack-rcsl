@@ -20,7 +20,7 @@ services:
   restart: always
   build: ./nginx/
   ports:
-    - "8092:80"
+    - "8099:80"
   volumes_from:
     - web
   links:
@@ -62,3 +62,26 @@ services:
   volumes:
     - /var/lib/postgresql
   command: "true"
+
+
+ logreader-tel:
+  container_name: logreader-tel
+  build: ./logreader
+  volumes:
+   - './logreader:/usr/src/app'
+   - '/media/callcenter/DIAGS:/media/callcenter/DIAGS/'
+  environment:
+   - LOGFILE=TelephonyServer_ccrcsl02.000
+  depends_on:
+   - redis
+
+ logreader-agent:
+  container_name: logreader-agent
+  build: ./logreader
+  volumes:
+   - './logreader:/usr/src/app'
+   - '/media/callcenter/DIAGS:/media/callcenter/DIAGS/'
+  environment:
+   - LOGFILE=PresenceServer_ccrcsl02.000
+  depends_on:
+   - redis

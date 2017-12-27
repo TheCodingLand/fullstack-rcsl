@@ -10,9 +10,6 @@ class Event(models.Model):
     
     
 
-
-
-
 class Agent_ot(models.Model):
 
     userloginname = models.CharField(max_length=200, null=True)
@@ -23,34 +20,34 @@ class Agent_ot(models.Model):
     active = models.BooleanField(default=False)
     phone = models.CharField(max_length=200, null=True)
     ot_id = models.CharField(max_length=200)
-    user = models.ForeignKey(User, null=True, blank=True)
     state = models.CharField(max_length=200, default = "available", blank=True)
     
 class Agent_unify(models.Model):
     login = models.CharField(max_length=200, null=True)
     active = models.BooleanField(default=False)
     ext = models.CharField(max_length=200, null=True)
-    user = models.ForeignKey(User, null = True, blank=True)
+    
     state = models.CharField(max_length=200, default = "available", blank=True)
-    agent_ot=models.OneToOneField(Agent_ot)
+    agent_ot=models.OneToOneField(Agent_ot,on_delete=models.DO_NOTHING)
 
     
 class Agent(models.Model):
-    user=models.OneToOneField(User)
-    agent_ot = models.OneToOneField(Agent_ot)
-    agent_unify = models.OneToOneField(Agent_unify)
+    user=models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    agent_ot = models.OneToOneField(Agent_ot,on_delete=models.DO_NOTHING)
+    agent_unify = models.OneToOneField(Agent_unify,on_delete=models.DO_NOTHING)
     avatar = models.ImageField(upload_to='userimage',blank=True)
 
 class Event_ot(models.Model):
     CreationDate = models.DateTimeField(null=True)
     Eventtype=  models.CharField(max_length=200, null=True)
     ot_id = models.IntegerField(null=True)
-    applicant = models.ForeignKey(Agent_ot)
-    responsible = models.ForeignKey(Agent_ot)
+    applicant = models.ForeignKey(Agent_ot, related_name='applicant', on_delete=models.CASCADE)
+    responsible = models.ForeignKey(Agent_ot, related_name='responsible', on_delete=models.CASCADE)
     state = models.CharField(max_length=200, null=True)
     transferhistory = models.CharField(max_length=200, null=True)
 
 class Call(models.Model):
+    name = models.CharField(max_length=200)
     ucid = models.CharField(max_length=200, unique=True)
     state = models.CharField(max_length=200, null=True)
     origin = models.CharField(max_length=200, null=True)
@@ -60,8 +57,8 @@ class Call(models.Model):
     end = models.DateTimeField(max_length=200, null=True, blank=True)
     isContactCenterCall = models.BooleanField(default=False)
     history = models.CharField(max_length=600, null=True)
-    primaryagent = models.ForeignKey(Agent, null=True, related_name='calls')
-    secondaryagent = models.ForeignKey(Agent, null=True, related_name='calls')
+    primaryagent = models.ForeignKey(Agent, null=True, related_name='calls', on_delete=models.CASCADE)
+    secondaryagent = models.ForeignKey(Agent, null=True, related_name='calls_alt', on_delete=models.CASCADE)
 
 
 

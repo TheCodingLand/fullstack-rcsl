@@ -6,3 +6,4 @@ psycopg2
 django-filter
 graphene
 graphene-django
+Pillow

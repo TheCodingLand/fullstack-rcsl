@@ -22,4 +22,4 @@ class Agent(graphene.ObjectType):
             'Title': self.Title, 
             'Description': self.Description,
         }
-        
+

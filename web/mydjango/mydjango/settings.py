@@ -127,9 +127,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-GRAPHENE = {
-    'SCHEMA': 'graphqlendpoint.schema.schema'
-}
+#GRAPHENE = {
+#    'SCHEMA': 'mydjango.schema.schema'
+#}
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
