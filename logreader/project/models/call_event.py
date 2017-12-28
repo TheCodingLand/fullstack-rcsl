@@ -13,7 +13,12 @@ class CallEvent(object):
         """storing a add call into redis"""
         data = { 'action': 'add', 'timestamp' : "%s" % self.timestamp, 'id' : self.id }
         conn.hmset(hash, data)
-
+    
+    def setCaller(self, phone):
+        hash="%s-%s-%s-%s" % (self.timestamp,'setcaller',phone, self.id)
+        data = { 'action': 'setdetails', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : phone }
+        conn.hmset(hash, data)
+        
     def setDetails(self, calltype):
         hash="%s-%s-%s-%s" % (self.timestamp,'setdetails',calltype, self.id)
         data = { 'action': 'setdetails', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : calltype }
@@ -33,4 +38,5 @@ class CallEvent(object):
         hash="%s-%s-%s" % (self.timestamp,'remove',self.id)
         data = { 'action': 'remove', 'timestamp' : "%s" % self.timestamp, 'id' : self.id}
         conn.hmset(hash, data)
+        
         

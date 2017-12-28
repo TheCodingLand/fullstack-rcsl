@@ -1,6 +1,7 @@
 from re import search
 from datetime import datetime
 from time import strptime,mktime
+from datetime import datetime
 
 
 class LogLine(object):
@@ -25,7 +26,9 @@ class LogLine(object):
         s = self.search("^\[(.*?)\]")
         d=False
         if s:
-            t = strptime(s, '%Y/%m/%d %H:%M:%S.%f')
-            d = datetime.fromtimestamp(mktime(t))
+            t = datetime.strptime(s, '%Y/%m/%d %H:%M:%S.%f')
+           
+            d=t
+            #d = datetime.fromtimestamp(mktime(t))
         return d
     

@@ -29,12 +29,12 @@ class parseLog(threading.Thread):
         self.oldfilesize = 0
         self.f = ""
         self.percent = 0
+        
     def parseline(self):
         e=Log(self.line)
         e.parse()
         
     def run(self):
-
         self.f = open(self.LogFile)
         sys.stdout.write("opened file %s" % (self.LogFile))
         

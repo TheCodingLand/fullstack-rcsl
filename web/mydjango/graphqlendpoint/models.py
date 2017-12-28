@@ -25,10 +25,10 @@ class Agent_ot(models.Model):
 class Agent_unify(models.Model):
     login = models.CharField(max_length=200, null=True)
     active = models.BooleanField(default=False)
-    ext = models.CharField(max_length=200, null=True)
+    ext = models.CharField(max_length=200, null=True, unique=True)
     
     state = models.CharField(max_length=200, default = "available", blank=True)
-    agent_ot=models.OneToOneField(Agent_ot,on_delete=models.DO_NOTHING)
+    agent_ot=models.OneToOneField(Agent_ot,on_delete=models.DO_NOTHING, null=True, blank=True)
 
     
 class Agent(models.Model):
@@ -57,8 +57,8 @@ class Call(models.Model):
     end = models.DateTimeField(max_length=200, null=True, blank=True)
     isContactCenterCall = models.BooleanField(default=False)
     history = models.CharField(max_length=600, null=True)
-    primaryagent = models.ForeignKey(Agent, null=True, related_name='calls', on_delete=models.CASCADE)
-    secondaryagent = models.ForeignKey(Agent, null=True, related_name='calls_alt', on_delete=models.CASCADE)
+    primaryagent = models.ForeignKey(Agent_unify, null=True, related_name='calls', on_delete=models.DO_NOTHING)
+    secondaryagent = models.ForeignKey(Agent_unify, null=True, related_name='calls_alt', on_delete=models.DO_NOTHING)
 
 
 

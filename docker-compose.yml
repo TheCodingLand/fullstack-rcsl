@@ -14,7 +14,10 @@ services:
   working_dir: /data/web/mydjango
   volumes:
     - ./web:/data/web
-  command: /usr/bin/gunicorn mydjango.wsgi:application -w 2 -b :8000
+  command: sh -c '/usr/bin/python3 eventmanager.py & /usr/bin/gunicorn mydjango.wsgi:application -w 2 -b :8000'
+  depends_on:
+   - redis
+   - postgres
   
  nginx:
   restart: always

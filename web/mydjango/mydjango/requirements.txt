@@ -1,7 +1,0 @@
-graphene>=2.0
-requests
-django 
-graphene-django 
-django-filter
-graphene-django-subscriptions
-

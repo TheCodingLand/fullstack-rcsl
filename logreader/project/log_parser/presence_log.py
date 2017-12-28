@@ -40,3 +40,4 @@ class PresenceLog(LogLine):
         
     def getUcid(self):
         return self.search(r"HandlingState:\{ContactId/RqC\{(.*?)\/")
+

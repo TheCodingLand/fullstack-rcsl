@@ -5,7 +5,7 @@ from project.log_parser.log_line import LogLine
 class TelephonyLog(LogLine):
     def __init__(self, line):
         super(TelephonyLog, self).__init__(line)
-        
+
     def parse(self):
         self.check_createNew()
         self.getDetails()
@@ -22,8 +22,10 @@ class TelephonyLog(LogLine):
             ev.setDetails(self.getCallType())
     
     def getTransfers(self):
-        if self.getEstablished():
+        if self.getEstablished() and self.getUcid():
             calling = self.getCalling()
+            ev=CallEvent(self.getUcid(),self.date)
+            ev.setCaller(calling)
             destination = self.getAnswerExt()
             ev = CallEvent(self.getUcid(),self.date)
             ev.transfer(self.getAnswerExt())
