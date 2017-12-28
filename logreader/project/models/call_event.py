@@ -1,6 +1,6 @@
 import json
 import redis 
-conn = redis.StrictRedis(host="redis", port=6379, db=0)
+conn = redis.StrictRedis(host="redis", port=6379, db=2)
 
 class CallEvent(object):
 

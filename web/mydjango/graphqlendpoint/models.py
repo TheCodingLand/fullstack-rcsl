@@ -63,5 +63,9 @@ class Call(models.Model):
 
 
 
-
+class Transfer():
+    origin = models.CharField(max_length=200)
+    destination = models.CharField(max_length=200)
+    timestamp = models.DateTimeField(max_length=200)
+    call = models.ForeignKey(Call, on_delete=models.CASCADE )
 
