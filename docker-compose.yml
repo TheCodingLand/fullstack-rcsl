@@ -88,3 +88,25 @@ services:
    - LOGFILE=PresenceServer_ccrcsl02.000
   depends_on:
    - redis
+   
+ ot-ws:
+  container_name: ot-ws
+  build: ./ot_ws
+  volumes:
+   - './ot_ws:/usr/src/app'
+  environment:
+   - OT_WS_URL=http://otrcsl01.rcsl.lu/otws/v1.asmx
+   - APP_SETTINGS=ot_ws.config.DevelopmentConfig
+  ports:
+   - 5001:5000 # expose ports - HOST:CONTAINER
+      
+ swagger:
+  container_name: swagger
+  build: ./swagger
+  ports:
+   - '5100:8080' # expose ports - HOST:CONTAINER
+  environment:
+   - API_URL=http://148.110.107.15:5001/api/ot/events/schema
+  depends_on:
+   ot-ws:
+    condition: service_started
