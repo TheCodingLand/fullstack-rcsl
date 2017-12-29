@@ -2,18 +2,18 @@ version: '2.1'
 
 services:
  
- event-manager:
+ web:
   restart: always
-  build: ./event-manager/
+  build: ./web/
   expose:
     - "8000"
   links:
     - postgres:postgres
     - redis:redis
   env_file: env
-  working_dir: /data/event-manager/mydjango
+  working_dir: /data/web/mydjango
   volumes:
-    - ./event-manager:/data/event-manager
+    - ./web:/data/web
   command: sh -c '/usr/bin/python3 manage.py makemigrations && /usr/bin/python3 manage.py migrate && /usr/bin/python3 eventmanager.py & /usr/bin/gunicorn mydjango.wsgi:application -w 2 -b :8000'
   depends_on:
    - redis
@@ -25,13 +25,15 @@ services:
   ports:
     - "8099:80"
   volumes_from:
-    - event-manager
+    - web
   links:
-    - event-manager:event-manager
+    - web:web
 
  postgres:
   restart: always
   image: postgres:latest
+  volumes_from:
+    - data
   volumes:
     - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     - ./backups/postgresql:/backup
@@ -58,6 +60,13 @@ services:
   volumes:
    - ./redis:/data
  
+ data:
+  restart: always
+  image: alpine
+  volumes:
+    - /var/lib/postgresql
+  command: "true"
+
 
  logreader-tel:
   container_name: logreader-tel

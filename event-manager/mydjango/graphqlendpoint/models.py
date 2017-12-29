@@ -19,6 +19,8 @@ class Agent_ot(models.Model):
     phone = models.CharField(max_length=200, null=True)
     ot_id = models.CharField(max_length=200)
     state = models.CharField(max_length=200, default = "available", blank=True)
+    def __str__(self):
+        return self.userloginname
     
 class Agent_unify(models.Model):
     login = models.CharField(max_length=200, null=True)
@@ -27,14 +29,17 @@ class Agent_unify(models.Model):
     
     state = models.CharField(max_length=200, default = "available", blank=True)
     agent_ot=models.OneToOneField(Agent_ot,on_delete=models.DO_NOTHING, null=True, blank=True)
-
+    def __str__(self):
+        return self.login
     
 class Agent(models.Model):
     user=models.OneToOneField(User, on_delete=models.DO_NOTHING)
     agent_ot = models.OneToOneField(Agent_ot,on_delete=models.DO_NOTHING)
     agent_unify = models.OneToOneField(Agent_unify,on_delete=models.DO_NOTHING)
     avatar = models.ImageField(upload_to='userimage',blank=True)
-
+    def __str__(self):
+        return self.user
+        
 class Event_ot(models.Model):
     CreationDate = models.DateTimeField(null=True)
     Eventtype=  models.CharField(max_length=200, null=True)
@@ -43,7 +48,9 @@ class Event_ot(models.Model):
     responsible = models.ForeignKey(Agent_ot, related_name='responsible', on_delete=models.CASCADE)
     state = models.CharField(max_length=200, null=True)
     transferhistory = models.CharField(max_length=200, null=True)
-
+    def __str__(self):
+        return self.ot_id
+    
 class Call(models.Model):
     name = models.CharField(max_length=200)
     ucid = models.CharField(max_length=200, unique=True)
@@ -57,7 +64,9 @@ class Call(models.Model):
     history = models.CharField(max_length=600, null=True)
     primaryagent = models.ForeignKey(Agent_unify, null=True, related_name='calls', on_delete=models.DO_NOTHING)
     secondaryagent = models.ForeignKey(Agent_unify, null=True, related_name='calls_alt', on_delete=models.DO_NOTHING)
-    
+    def __str__(self):
+        return self.ucid
+        
     def getTransfers(self):
         tf = Transfer.objects.filter(call=self).order_by('timestamp')
         return tf
@@ -79,4 +88,6 @@ class Transfer(models.Model):
     destination = models.CharField(max_length=200)
     timestamp = models.DateTimeField(max_length=200)
     call = models.ForeignKey(Call, on_delete=models.CASCADE )
+    def __str__(self):
+        return "%s - %" % (self.call, self.destination)
 

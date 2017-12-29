@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from ot_ws.ot.ot_field import *
 import re
+
 testxml="""<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope
     xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
@@ -73,9 +74,6 @@ class serialize(object):
         self.res={ }
         self.metadata = { }
         self.parse(xml)
-       
-        
-
 
     def getFields(self,xml):
         for field in xml:
@@ -92,12 +90,18 @@ class serialize(object):
             root = tree \
                 .find('*//GetObjectListResult')
             if root.attrib['success'] == "true":
-                result = True
-                root = root[0]
-                id = root.attrib['id']
-                self.getFields(root)
-            else:
-                self.res = False
+                nbresults=1
+                try:
+                    nbresults=int(root.attrib['totalNumberResults'])
+                except:
+                    nbresults=1                    
+                if nbresults==1:
+                    result = True
+                    root = root[0]
+                    id = root.attrib['id']
+                    self.getFields(root)
+                else:
+                    self.res = False
 
 def test():
     data=testxml

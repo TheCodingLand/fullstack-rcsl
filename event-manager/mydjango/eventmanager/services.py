@@ -1,6 +1,6 @@
 import pytz
 
-from eventmanager import ot_services
+from eventmanager.ot_services import ot_services
 from eventmanager.django_services import django_calls_services
 
 from datetime import datetime
@@ -47,7 +47,7 @@ class Services(object):
     
     def onCallCreate(self):
         django = django_calls_services().create_call(self.id, self.timestamp)
-        ot = True
+        ot = ot_services().create_call(self.id, self.timestamp)
         frontend=True
         return django and ot and frontend
         
