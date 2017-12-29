@@ -3,7 +3,7 @@ import pytz
 from eventmanager import ot_services
 from eventmanager.django_services import django_calls_services
 
-
+from datetime import datetime
 #from . import frontend_services
 paris=pytz.timezone('Europe/Paris')
 
@@ -15,10 +15,10 @@ class Services(object):
         self.redishash=redishash
         datestr = self.redishash.get('timestamp')
         self.id = redishash.get('id')
-        self.action = redishhash.get('action')
+        self.action = redishash.get('action')
         
         self.data = ""
-        if rediskey.get('data'):
+        if redishash.get('data'):
             self.data = redishash.get('data')
         try:
             dt = datetime.strptime(datestr, '%Y-%m-%d %H:%M:%S.%f')
@@ -27,57 +27,60 @@ class Services(object):
         
         self.timestamp = paris.localize(dt)
         
-        if action == "add":
-            self.done = self.onCallCreated()
+        if self.action == "add":
+            self.done = self.onCallCreate()
         
-        if action == "transfer":
-            self.done = self.onTransfer()
+        if self.action == "transfer":
+            self.done = self.onCallTransfer()
             
-        if action == "setdetails":
+        if self.action == "setdetails":
             self.done = self.onCallDetails()
             
-        if action == "setcaller":
+        if self.action == "setcaller":
             self.done = self.onCallerUpdated()
             
-        if action == "changestate":
+        if self.action == "changestate":
             self.done = self.onAgentChangeState()
             
-        if action == "remove":
+        if self.action == "remove":
             self.done = self.onCallFinished()
     
-    def onCallCreated(self):
-        django = django_calls_services.create_call(self)
+    def onCallCreate(self):
+        django = django_calls_services().create_call(self.id, self.timestamp)
         ot = True
         frontend=True
         return django and ot and frontend
         
     def onCallTransfer(self):
-        django = django_calls_services.transfer_call(self)
-        ot = ot_services.create_or_update()
-        frontend = True
+        django = django_calls_services().transfer_call(self.id, self.timestamp,self.data)
+        #ot = ot_services.create_or_update(id)
+        ot = True
         frontend=True
         return django and ot and frontend
     
     def onCallDetails(self):
-        django = django_calls_services.update_details(self)
-        ot = ot_services.update_details_if_helpdesk(self)        
+        django = django_calls_services().update_details(self.id, self.timestamp, self.data)
+        #ot = ot_services.update_details(id)        
+        ot=True
         frontend=True
         return django and ot and frontend
 
     def onCallerUpdated(self):
-        django = django_calls_services.update_details_call(self)
-        ot = ot_services.update_details(self)        
+        django = django_calls_services().update_details_call(self.id, self.timestamp, self.data)
+        #ot = ot_services.update_details(id)        
+        ot=True
         frontend=True
         return django and ot and frontend
 
     def onCallFinished(self):
-        django= django_calls_services.end(self)
-        ot=ot_services.end(self)
+        django= django_calls_services().end(self.id, self.timestamp)
+        #ot=ot_services.end(id)
+        ot=True
         frontend=True
         return django and ot and frontend
         
     def onAgentChangeState(self):
-        django = django_agents_services.update_agent()
+        django = django_agents_services().update_agent(self.id, self.timestamp, self.data)
         ot=True
         frontend=True
         return django and ot and frontend

@@ -1,10 +1,5 @@
 import redis
 from operator import itemgetter
-from django.core.exceptions import ObjectDoesNotExist
-
-
-from django.core.exceptions import ObjectDoesNotExist
-django.setup()
 import time
 import pytz
 from datetime import datetime
@@ -12,7 +7,7 @@ from datetime import datetime
 from eventmanager import services
 
 
-r = redis.StrictRedis(host='redis', decode_responses=True, port=6379, db=)
+r = redis.StrictRedis(host='redis', decode_responses=True, port=6379, db=2)
 
 def getAddedCalls():
     for key in r.scan_iter(match='*'):     
@@ -20,7 +15,7 @@ def getAddedCalls():
             c = r.hgetall(key)
         except redis.exceptions.ResponseError:
             pass
-        s = Services(c)
+        s = services.Services(c)
         if s.done== True:
             r.delete(key)
   

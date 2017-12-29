@@ -3,11 +3,9 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 
-
 class Event(models.Model):
 
     timestamp = models.DateTimeField(null=False)
-    
     
 
 class Agent_ot(models.Model):
@@ -59,12 +57,25 @@ class Call(models.Model):
     history = models.CharField(max_length=600, null=True)
     primaryagent = models.ForeignKey(Agent_unify, null=True, related_name='calls', on_delete=models.DO_NOTHING)
     secondaryagent = models.ForeignKey(Agent_unify, null=True, related_name='calls_alt', on_delete=models.DO_NOTHING)
+    
+    def getTransfers(self):
+        tf = Transfer.objects.filter(call=self).order_by('timestamp')
+        return tf
+    
+    def updatehistory(self):
+        self.history = ""
+        for t in self.getTransfers():
+            if t.origin =="":
+                #first transfer
+                self.history == t.destination
+            else:
+                #other transfers
+                self.history = "%s -> %s" % (self.history, t.destination)
+        self.save()
 
 
-
-
-class Transfer():
-    origin = models.CharField(max_length=200)
+class Transfer(models.Model):
+    origin = models.CharField(max_length=200, null=True)
     destination = models.CharField(max_length=200)
     timestamp = models.DateTimeField(max_length=200)
     call = models.ForeignKey(Call, on_delete=models.CASCADE )
