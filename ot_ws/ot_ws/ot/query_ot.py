@@ -19,8 +19,10 @@ class query_ot():
         self.xml = ""
         self.xml_result = ""
         self.result = ""
+        self.id= ""
         
     def get(self, id):
+        self.id = id
         """Takes ID returns a formatted object"""
         self.body = r'<Get folderPath="" recursive="true"><ObjectIDs objectIDs="%s"/></Get>' % (id)
         self.command="GetObjectList"
@@ -31,23 +33,23 @@ class query_ot():
         self.command = "AddObject"
         fieldxml = ""
         for field in fields:
-            print("looking for field xml string : of field %s, with value %s, class %s"%(field.name, field.value, field.fieldtype))
+            #print("looking for field xml string : of field %s, with value %s, class %s"%(field.name, field.value, field.fieldtype))
             print (field.fieldXMLString())
             fieldxml = "%s%s" % (fieldxml, field.fieldXMLString())
         self.body = r'%s<Object folderPath="%s">' % (self.body, model.folder) + \
             r'%s' % fieldxml
         self.body = '%s</Object>' % self.body
-        print(self.body)
+        #print(self.body)
         self.send()
         tree = ET.fromstring(self.xml_result)
         root = tree \
             .find('*//{http://www.omninet.de/OtWebSvc/v1}AddObjectResult')
         if root.attrib['success'] == "true":
             id = root.attrib['objectId']
-        else:
-            print("couldn't add item in %s with fields %s" % (model.folder, fields))
-            print("request : %s" % self.xml)
-            print("response : %s" % self.xml_result)
+
+            #print("couldn't add item in %s with fields %s" % (model.folder, fields))
+            #print("request : %s" % self.xml)
+            #print("response : %s" % self.xml_result)
         return id
 
     def getField(self, id, field):
@@ -60,13 +62,13 @@ class query_ot():
     def send(self):
         self.initQuery()
         data = self.xml.replace(r'\r\n', r'&#x000d;&#x000a;').encode("ascii", "xmlcharrefreplace")
-        print(self.headers)
-        print(data)
-        print(url)
+        #print(self.headers)
+        #print(data)
+        #print(url)
         result = requests.post(url, data=data, headers=self.headers)
-        #print(self.body)
+        ##print(self.body)
         
-        print(result.content)
+        #print(result.content)
         self.xml_result = result.content
         
                     

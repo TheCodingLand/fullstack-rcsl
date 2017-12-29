@@ -66,7 +66,7 @@ class Services(object):
         return django and ot and frontend
 
     def onCallerUpdated(self):
-        django = django_calls_services().update_details_call(self.id, self.timestamp, self.data)
+        django = django_calls_services().update_caller(self.id, self.timestamp, self.data)
         #ot = ot_services.update_details(id)        
         ot=True
         frontend=True

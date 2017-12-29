@@ -10,7 +10,6 @@ from django.core.exceptions import ObjectDoesNotExist
 django.setup()
 import requests
 
-from graphqlendpoint.models import Agent, Agent_ot, Agent_unify,Event_ot, Call, Transfer
 
 from django.db import connection
 
@@ -20,6 +19,7 @@ class ot_services(object):
         #there are exceptions where databasae connexion is closed when idle for a long time.
         connection.close()
     def create_call(self, id, timestamp):
+        #Event_ot = Event_OT()
         url = 'http://ot-ws:5000/api/ot/events/events/ucid/%s'% id
         resp = requests.get(url=url)
         data = json.loads(resp.text)        

@@ -5,7 +5,7 @@ import django
 from django.core.exceptions import ObjectDoesNotExist
 django.setup()
 
-from graphqlendpoint.models import Agent, Agent_ot, Agent_unify,Event_ot, Call, Transfer
+from graphqlendpoint.models import Agent, Event, Call, Transfer
 
 from django.db import connection
 
@@ -20,14 +20,21 @@ class django_calls_services(object):
         call = Call.objects.update_or_create(ucid=id)[0]
         call.start=timestamp
         call.save()
-        print ("create call in django")
+
+        return True
+    
+    def set_caller(self, id, timestamp, data):
+        call = Call.objects.update_or_create(ucid=id)[0]
+        call.origin=data
+        call.save()
+
         return True
     
     def update_details(self, id, timestamp, data):
         call = Call.objects.update_or_create(ucid=id)[0]
         call.call_type=data
         call.save()
-        print ("set details django")
+
         return True
     
     def transfer_call(self, id, timestamp, data):
@@ -42,31 +49,32 @@ class django_calls_services(object):
                 origin=""
             else:
                 origin = call.destination
-                
-            t = Transfer(call=call, origin=origin, destination = data, timestamp = timestamp)
-            t.save()
             
+            if origin !=data:
+                
+                t = Transfer(call=call, origin=origin, destination = data, timestamp = timestamp)
+                t.save()
             call.updatehistory()
             call.destination = data
             call.save()
     
-        print ("transfer call in django")
+       
         return True
         
     def end(self, id, timestamp):
         call = Call.objects.update_or_create(ucid=id)[0]
         call.end=timestamp
         call.save()
-        print ("end call in django")
+       
         return True
     
     def update_agent(self):
-        print ("update agent in django")
+
         return True
     
 
 class django_agents_services(object):
     
     def __init__(self, key):
-        self.agent = Agent_unify.objects.update_or_create(ucid=key.id)[0]
+        self.agent = Agent.objects.update_or_create(ucid=key.id)[0]
         

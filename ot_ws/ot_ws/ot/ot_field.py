@@ -110,7 +110,7 @@ class ReferenceToUserVal(ot_field):
     def __init__(self, name):
         super(ReferenceToUserVal, self).__init__(name)
         self.fieldtype = "ReferenceToUserVal"
-        self.reference = "userloginname"
+        self.reference = "userdisplayname"
 
     def fieldXMLString(self):
         fieldquery = r'<ReferenceToUserVal name = "%s" type = "%s" Value = "%s" />' \
