@@ -21,10 +21,11 @@ class ot_services(object):
     def create_call(self, id, timestamp):
         #Event_ot = Event_OT()
         url = 'http://ot-ws:5000/api/ot/events/events/ucid/%s'% id
-        resp = requests.get(url=url)
-        data = json.loads(resp.text)        
-        print(data)
+        try:
+            resp = requests.get(url=url)
+            data = json.loads(resp.text) 
+            print(data)
+        except:
+            pass
         #call = Call.objects.update_or_create(ucid=id)[0]
         return True
-    
-   

@@ -16,7 +16,7 @@ class CallEvent(object):
     
     def setCaller(self, phone):
         hash="%s-%s-%s-%s" % (self.timestamp,'setcaller',phone, self.id)
-        data = { 'action': 'setdetails', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : phone }
+        data = { 'action': 'setcaller', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : phone }
         conn.hmset(hash, data)
         
     def setDetails(self, calltype):
