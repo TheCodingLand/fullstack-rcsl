@@ -1,9 +1,10 @@
 
+
 from graphqlendpoint.models import Agent, Call, Event
 
 class eventparser(object):
     def __init__(self, json):
-        super(Event, self).__init__(json):
+        super(Event, self).__init__(json)
         """Lets be stric with ot objects management"""
         try:
             self.event = Call.objects.get(ucid=id)

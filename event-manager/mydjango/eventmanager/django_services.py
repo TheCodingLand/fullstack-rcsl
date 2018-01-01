@@ -9,16 +9,22 @@ from graphqlendpoint.models import Agent, Event, Call, Transfer
 
 from django.db import connection
 
+
+
+
+
 class django_calls_services(object):
 
     def __init__(self):
         #there are exceptions where databasae connexion is closed when idle for a long time.
         connection.close()
       
-    
+
     def create_call(self, id, timestamp):
         call = Call.objects.update_or_create(ucid=id)[0]
         call.start=timestamp
+        
+
         call.save()
 
         return True
@@ -39,6 +45,7 @@ class django_calls_services(object):
     
     def transfer_call(self, id, timestamp, data):
         call = Call.objects.update_or_create(ucid=id)[0]
+        
         transfers =call.getTransfers().filter(timestamp=timestamp, destination = data)
         #check if this exists already
         if len(transfers)>0:
@@ -51,19 +58,22 @@ class django_calls_services(object):
                 origin = call.destination
             
             if origin !=data:
-                
                 t = Transfer(call=call, origin=origin, destination = data, timestamp = timestamp)
                 t.save()
             call.updatehistory()
+            
+            agent=Agent.objects.get_or_create(ext=data)[0]
+            agent.save()
             call.destination = data
             call.save()
     
-       
+
         return True
         
     def end(self, id, timestamp):
         call = Call.objects.update_or_create(ucid=id)[0]
         call.end=timestamp
+       
         call.save()
        
         return True

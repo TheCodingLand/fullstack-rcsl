@@ -7,6 +7,8 @@ services:
   build: ./event-manager/
   expose:
     - "8000"
+  ports:
+    - "8098:8000"
   links:
     - postgres:postgres
     - redis:redis
@@ -14,7 +16,8 @@ services:
   working_dir: /data/event-manager/mydjango
   volumes:
     - ./event-manager:/data/event-manager
-  command: sh -c '/usr/bin/python3 manage.py makemigrations && /usr/bin/python3 manage.py migrate && /usr/bin/python3 eventmanager.py & /usr/bin/gunicorn mydjango.wsgi:application -w 2 -b :8000'
+  command: sh -c '/usr/bin/python3 manage.py runserver 0.0.0.0:8000'
+  #command: sh -c '/usr/bin/python3 manage.py makemigrations && /usr/bin/python3 manage.py migrate && /usr/bin/python3 eventmanager.py & /usr/bin/python3 manage.py runserver 0.0.0.0:8000'
   depends_on:
    - redis
    - postgres
@@ -55,6 +58,8 @@ services:
   image: redis:latest
   expose:
     - "6379"
+  ports:
+    - "6379:6379" 
   volumes:
    - ./redis:/data
  
@@ -64,7 +69,7 @@ services:
   build: ./logreader
   volumes:
    - './logreader:/usr/src/app'
-   - '.:/media/callcenter/DIAGS/'
+   - './log:/media/callcenter/DIAGS/'
   environment:
    - LOGFILE=TelephonyServer.txt
   depends_on:
@@ -75,7 +80,7 @@ services:
 #  build: ./logreader
 #  volumes:
 #   - './logreader:/usr/src/app'
-#   - '/media/callcenter/DIAGS:/media/callcenter/DIAGS/'
+#   - './log:/media/callcenter/DIAGS/'
 #  environment:
 #   - LOGFILE=PresenceServer_ccrcsl02.000
 #  depends_on:

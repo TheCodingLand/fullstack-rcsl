@@ -2,9 +2,9 @@ import pytz
 
 from eventmanager.ot_services import ot_services
 from eventmanager.django_services import django_calls_services
-
+from eventmanager.redis import Redis
 from datetime import datetime
-#from . import frontend_services
+#from . import redis_services
 paris=pytz.timezone('Europe/Paris')
 
 
@@ -48,42 +48,42 @@ class Services(object):
     def onCallCreate(self):
         django = django_calls_services().create_call(self.id, self.timestamp)
         ot = ot_services().create_call(self.id, self.timestamp)
-        frontend=True
-        return django and ot and frontend
+        redis = Redis().update(self.id, self.timestamp)
+        return django and ot and redis
         
     def onCallTransfer(self):
         django = django_calls_services().transfer_call(self.id, self.timestamp,self.data)
         #ot = ot_services.create_or_update(id)
         ot = True
-        frontend=True
-        return django and ot and frontend
+        redis=redis = Redis().update('agent', self.data)
+        return django and ot and redis
     
     def onCallDetails(self):
         django = django_calls_services().update_details(self.id, self.timestamp, self.data)
         #ot = ot_services.update_details(id)        
         ot=True
-        frontend=True
-        return django and ot and frontend
+        redis=True
+        return django and ot and redis
 
     def onCallerUpdated(self):
-        django = django_calls_services().update_caller(self.id, self.timestamp, self.data)
+        django = django_calls_services().set_caller(self.id, self.timestamp, self.data)
         #ot = ot_services.update_details(id)        
         ot=True
-        frontend=True
-        return django and ot and frontend
+        redis=True
+        return django and ot and redis
 
     def onCallFinished(self):
         django= django_calls_services().end(self.id, self.timestamp)
         #ot=ot_services.end(id)
         ot=True
-        frontend=True
-        return django and ot and frontend
+        redis=True
+        return django and ot and redis
         
     def onAgentChangeState(self):
         django = django_agents_services().update_agent(self.id, self.timestamp, self.data)
         ot=True
-        frontend=True
-        return django and ot and frontend
+        redis=True
+        return django and ot and redis
         
         
         

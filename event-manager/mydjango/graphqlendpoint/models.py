@@ -1,9 +1,13 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 # Create your models here.
 
 
-    
+class LoggedInUser(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, related_name='logged_in_user',on_delete=models.CASCADE)
+
 class Agent(models.Model):
     firstname = models.CharField(max_length=200, null=True)
     lastname = models.CharField(max_length=200, null=True)
@@ -11,14 +15,14 @@ class Agent(models.Model):
     ot_userloginname = models.CharField(max_length=200, null=True)
     ot_userdisplayname = models.CharField(max_length=200, null=True, blank=True)
     ot_id = models.CharField(max_length=200,null=True)
-    user=models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    user=models.OneToOneField(User, on_delete=models.DO_NOTHING, null=True)
     phone_login = models.CharField(max_length=200, null=True)
     phone_active = models.BooleanField(default=False)
     ext = models.CharField(max_length=200, null=True, unique=True)
     phone_state = models.CharField(max_length=200, default = "available", blank=True)
     avatar = models.ImageField(upload_to='userimage',blank=True)
     def __str__(self):
-        return "%s" % firstname
+        return "%s" % self.firstname
         
         
 class Event(models.Model):
@@ -83,7 +87,7 @@ class Call(models.Model):
     def getTransfers(self):
         tf = Transfer.objects.filter(call=self).order_by('timestamp')
         return tf
-    
+   
     def updatehistory(self):
         self.history = ""
         for t in self.getTransfers():
@@ -101,4 +105,9 @@ class Transfer(models.Model):
     destination = models.CharField(max_length=200)
     timestamp = models.DateTimeField(max_length=200)
     call = models.ForeignKey(Call, on_delete=models.CASCADE)
- 
+    
+    
+    
+class ActiveCalls(models.Model):
+    call = models.OneToOneField(
+        Call, related_name='active',on_delete=models.CASCADE)

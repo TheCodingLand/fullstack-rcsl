@@ -31,6 +31,8 @@ class TelephonyLog(LogLine):
             ev.transfer(self.getAnswerExt())
             
             
+            
+            
     def manageEnd(self):
         if self.getTerminated():
             ev = CallEvent(self.getUcid(),self.date)

@@ -16,6 +16,9 @@ RUN pip3 install --upgrade pip
 COPY requirements.txt /data/event-manager/
 RUN pip3 install -r requirements.txt
 
+#saving build time
+COPY requirementss.txt /data/event-manager/
+RUN pip3 install -r requirementss.txt
 # Clean
 RUN apk del -r python3-dev postgresql
 
