@@ -60,8 +60,12 @@ class django_calls_services(object):
             call.updatehistory()
             try:
                 agent=Agent.objects.get(ext=data)[0]
+                if agent.user in Groups.objects.get('name=helpdesk')
+                    call.primaryagent = Agent
+                    call.save()
+                
             except:
-                log.info('not an agent or not logged in %s' % data )
+                log.info('not an agent %s' % data )
             call.destination = data
             call.save()
         return True
