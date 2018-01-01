@@ -12,7 +12,6 @@ class eventparser(object):
             self.event=False
         
         if ot_Event:
-        
             for key, value in json:
                 if key == "Applicant":
                     agent=Agent.objects.get_or_create(ot_userdisplayname=value)
@@ -25,7 +24,6 @@ class eventparser(object):
                     event.phone=value
                 if key == "RelatedIncident":
                     event.ticketid=value
-
                 if key == "Responsible":
                     pass
                 if key == "TransferHistory":

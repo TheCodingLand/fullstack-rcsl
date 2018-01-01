@@ -23,10 +23,7 @@ class django_calls_services(object):
     def create_call(self, id, timestamp):
         call = Call.objects.update_or_create(ucid=id)[0]
         call.start=timestamp
-        
-
         call.save()
-
         return True
     
     def set_caller(self, id, timestamp, data):
@@ -61,30 +58,33 @@ class django_calls_services(object):
                 t = Transfer(call=call, origin=origin, destination = data, timestamp = timestamp)
                 t.save()
             call.updatehistory()
-            
-            agent=Agent.objects.get_or_create(ext=data)[0]
-            agent.save()
+            try:
+                agent=Agent.objects.get(ext=data)[0]
+            except:
+                log.info('not an agent or not logged in %s' % data )
             call.destination = data
             call.save()
-    
-
         return True
         
     def end(self, id, timestamp):
         call = Call.objects.update_or_create(ucid=id)[0]
         call.end=timestamp
-       
         call.save()
-       
         return True
     
     def update_agent(self):
 
         return True
-    
+
 
 class django_agents_services(object):
     
-    def __init__(self, key):
-        self.agent = Agent.objects.update_or_create(ucid=key.id)[0]
+    def __init__(self):
+        connection.close()
+    def update_agent(self, key):
+        self.agent = Agent.objects.update_or_create(phone_login=key.id)[0]
+        self.agent.phone_state=key.data
+        self.agent.save()
+        
+        
         
