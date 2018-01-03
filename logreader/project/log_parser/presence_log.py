@@ -28,6 +28,8 @@ class PresenceLog(LogLine):
     def changeACDState(self):
         if self.getAcdState():
             AgentEvent(self.getUserId(), self.date).changeacdState(self.getAcdState())
+        if self.getUnavailable():
+            AgentEvent(self.getUserId(), self.date).changeacdState('ACDUNAVAIL')
     
     def changeDeviceState(self):
         if self.getLineState():
@@ -43,6 +45,10 @@ class PresenceLog(LogLine):
         state = self.search(r"Acd State\{(.*?)\}")
         if state==False:
             state = self.search(r"TpsSUserPresence::OnEvent. Rcvd Agent (ACDAVAIL)")
+        return state
+        
+    def getUnavailable(self):
+        state = r"TpsSUserPresence::OnEvent. Rcvd Agent ACDUNAVAIL Event for UserId{" in self.line
         return state
         
     def getLineState(self):
