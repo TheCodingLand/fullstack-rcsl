@@ -1,6 +1,6 @@
 import json
 import redis 
-conn = redis.StrictRedis(host="redis", port=6379, db=1)
+conn = redis.StrictRedis(host="redis", port=6379, db=2)
 
 class AgentEvent(object):
 
@@ -11,7 +11,7 @@ class AgentEvent(object):
     
     def linkCall(self, ucid):
         hash="%s-%s-%s-%s" % (self.timestamp,'linkcall',self.id, ucid)
-        data = { 'action': 'gotcall', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : '%s' % (ucid) }
+        data = { 'action': 'linkcall', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : '%s' % (ucid) }
         conn.hmset(hash, data)
         
     def changeacdState(self, state):
@@ -24,9 +24,9 @@ class AgentEvent(object):
         data = { 'action': 'changeDeviceState', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : '%s' % (state) }
         conn.hmset(hash, data)
 
-    def login(date, id):
-        hash="%s-%s-%s" % (self.timestamp,'add',id)
-        data = { 'action': 'login', 'timestamp' : "%s" % self.timestamp, 'id' : id }
+    def login(self, state):
+        hash="%s-%s-%s-%s" % (self.timestamp,'login',self.id, state )
+        data = { 'action': 'login', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : '%s' % (state)  }
         conn.hmset(hash, data)
 
     def logoff(self):

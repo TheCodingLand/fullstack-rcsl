@@ -1,7 +1,10 @@
 # project/api/views.py
 from flask_restplus import Namespace, Resource, fields
 from ot_ws.api.models.event import event, ticket
+import logging
+log = logging.getLogger(__name__)
 
+log.setLevel(logging.ERROR)
 from ot_ws.api.restplus import api
 from ot_ws.ot.query_ot import query_ot
 from ot_ws.ot.ot_models import Event, Ticket, Category
@@ -88,7 +91,7 @@ def getFields(object_model, data):
     fields = []
     for key in data.keys():
         if key in object_model.fields.keys():
-            print(key)
+            #print(key)
             cls = globals()[object_model.fields[key]] 
             f = cls(key)
             f.value = data[key]   
@@ -215,6 +218,7 @@ class EventItem(Resource):
             else:
                 response_object = {
                     'status': 'success',
+                    'id' : e.id,
                     'data': event
                 }
                 return response_object, 200
@@ -295,8 +299,8 @@ class TicketAdd(Resource):
             return jsonify(response_object), 400
         try:
             r = query_ot()
-            print (ticket_model)
-            print(fields)
+            #print (ticket_model)
+            #print(fields)
             event = r.add(ticket_model,fields)
             if event:
                 response_object = {

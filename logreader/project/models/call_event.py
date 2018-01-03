@@ -9,9 +9,9 @@ class CallEvent(object):
         self.timestamp = date
 
     def add(self):
-        hash="%s-%s-%s" % (self.timestamp,'add',self.id)
+        hash="%s-%s-%s" % (self.timestamp,'create',self.id)
         """storing a add call into redis"""
-        data = { 'action': 'add', 'timestamp' : "%s" % self.timestamp, 'id' : self.id }
+        data = { 'action': 'create', 'timestamp' : "%s" % self.timestamp, 'id' : self.id }
         conn.hmset(hash, data)
     
     def setCaller(self, phone):

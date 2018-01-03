@@ -10,7 +10,10 @@ from ot_ws.api.views import ns as ot_events_namespace
 from flask_cors import CORS
 
 
+import logging
+log = logging.getLogger('werkzeug')
 
+log.setLevel(logging.ERROR)
 
 def create_app():
 

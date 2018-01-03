@@ -34,7 +34,7 @@ class query_ot():
         fieldxml = ""
         for field in fields:
             #print("looking for field xml string : of field %s, with value %s, class %s"%(field.name, field.value, field.fieldtype))
-            print (field.fieldXMLString())
+            #print (field.fieldXMLString())
             fieldxml = "%s%s" % (fieldxml, field.fieldXMLString())
         self.body = r'%s<Object folderPath="%s">' % (self.body, model.folder) + \
             r'%s' % fieldxml
@@ -106,7 +106,4 @@ class query_ot():
 
         filterVars =  r'<%s name="%s">%s</%s>' % ('StringVal', 'UCID', UCID, 'StringVal')
         self.body = r'%s%s</Filter></Get>' % (self.body, filterVars)
-
-        
-        
         self.send()

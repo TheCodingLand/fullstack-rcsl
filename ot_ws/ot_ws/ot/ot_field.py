@@ -7,8 +7,6 @@ date_handler = lambda obj: (
     if isinstance(obj, (datetime.datetime, datetime.date))
     else None
 )
-#json.dumps(datetime.datetime.now(), default=date_handler)
-#'"2010-04-20T20:08:21.634121"' format for date in json
 
 class ot_field(object):
     def __init__(self, name):

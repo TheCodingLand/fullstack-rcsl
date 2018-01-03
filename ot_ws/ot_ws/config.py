@@ -7,12 +7,12 @@ class BaseConfig:
  
 class DevelopmentConfig(BaseConfig):
     """Development configuration"""
-    DEBUG = True
+    DEBUG = False
 
 
 class TestingConfig(BaseConfig):
     """Testing configuration"""
-    DEBUG = True
+    DEBUG = False
     TESTING = True
 
 

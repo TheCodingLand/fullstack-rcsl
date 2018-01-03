@@ -38,8 +38,7 @@ class TelephonyLog(LogLine):
             ev = CallEvent(self.getUcid(),self.date)
             ev.end()
     
-    def agentStateChanged():
-        return self.search(r"")
+
 
     def getUcid(self):
         return self.search(r"UCID<(.*?)>")

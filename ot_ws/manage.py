@@ -7,7 +7,10 @@ from flask_script import Manager
 
 from ot_ws import create_app
 
+import logging
+log = logging.getLogger(__name__)
 
+log.setLevel(logging.ERROR)
 
 app = create_app()
 manager = Manager(app)

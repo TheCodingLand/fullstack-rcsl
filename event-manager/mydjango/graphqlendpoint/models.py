@@ -16,7 +16,7 @@ class Agent(models.Model):
     ot_userdisplayname = models.CharField(max_length=200, null=True, blank=True)
     ot_id = models.CharField(max_length=200,null=True)
     user=models.OneToOneField(User, on_delete=models.DO_NOTHING, null=True)
-    phone_login = models.CharField(max_length=200, null=True)
+    phone_login = models.CharField(max_length=200, null =True)
     phone_active = models.BooleanField(default=False)
     ext = models.CharField(max_length=200, null=True, unique=True)
     phone_state = models.CharField(max_length=200, default = "available", blank=True)
@@ -25,18 +25,7 @@ class Agent(models.Model):
         return "%s" % self.firstname
         
         
-class Event(models.Model):
-    creationdate = models.DateTimeField(null=True)
-    end=models.DateTimeField(null=True)
-    ot_id = models.IntegerField(null=True)
-    applicant = models.ForeignKey(Agent, related_name='events_applicant', on_delete=models.CASCADE, null=True)
-    responsible = models.ForeignKey(Agent, related_name='events_responsible', on_delete=models.CASCADE, null=True)
-    state = models.CharField(max_length=200, null=True)
-    transferhistory = models.CharField(max_length=200, null=True)
-    phone = models.CharField(max_length=200, null=True)
-   
-    def __str__(self):
-        return  "%s" % self.ot_id
+
 
 
 class Category(models.Model):
@@ -56,7 +45,7 @@ class Category(models.Model):
 class Ticket(models.Model):
     creationdate = models.DateTimeField(null=True)
     title=models.DateTimeField(null=True)
-    category =models.ForeignKey(Category, related_name='tickets', on_delete=models.DO_NOTHING, null=True)
+    category =models.ForeignKey(Category, related_name='category_tickets', on_delete=models.DO_NOTHING, null=True)
     applicant = models.ForeignKey(Agent, related_name='tickets_created', on_delete=models.CASCADE, null=True)
     responsible = models.ForeignKey(Agent, related_name='tickets_responsible', on_delete=models.CASCADE, null=True)
     state = models.CharField(max_length=200, null=True)
@@ -65,10 +54,22 @@ class Ticket(models.Model):
    
     def __str__(self):
         return "%s" % self.title
-    
+        
+class Event(models.Model):
+    creationdate = models.DateTimeField(null=True)
+    end=models.DateTimeField(null=True)
+    ot_id = models.IntegerField(null=True)
+    applicant = models.ForeignKey(Agent, related_name='events_applicant', on_delete=models.CASCADE, null=True)
+    responsible = models.ForeignKey(Agent, related_name='events_responsible', on_delete=models.CASCADE, null=True)
+    state = models.CharField(max_length=200, null=True)
+    transferhistory = models.CharField(max_length=200, null=True)
+    phone = models.CharField(max_length=200, null=True)
+    ticket = models.ForeignKey(Ticket, related_name='tickets', on_delete=models.CASCADE, null=True)
+   
+    def __str__(self):
+        return  "%s" % self.ot_id    
     
 class Call(models.Model):
-    name = models.CharField(max_length=200)
     ucid = models.CharField(max_length=200, unique=True)
     state = models.CharField(max_length=200, null=True)
     origin = models.CharField(max_length=200, null=True)
@@ -78,9 +79,8 @@ class Call(models.Model):
     end = models.DateTimeField(max_length=200, null=True, blank=True)
     isContactCenterCall = models.BooleanField(default=False)
     history = models.CharField(max_length=600, null=True)
-    primaryagent = models.ForeignKey(Agent, null=True, related_name='calls', on_delete=models.DO_NOTHING)
-    secondaryagent = models.ForeignKey(Agent, null=True, related_name='calls_alt', on_delete=models.DO_NOTHING)
-    ticket = models.ForeignKey(Ticket, null=True, related_name='calls_alt', on_delete=models.DO_NOTHING)
+    primaryagent = models.ForeignKey(Agent, null=True, related_name='call_for_agent', on_delete=models.DO_NOTHING)
+    event = models.OneToOneField(Event, on_delete=models.DO_NOTHING, null=True, related_name='call')
     def __str__(self):
         return "%s" % self.ucid
         

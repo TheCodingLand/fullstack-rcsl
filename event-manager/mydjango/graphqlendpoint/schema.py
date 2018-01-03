@@ -1,31 +1,37 @@
 import graphene
+from graphene import relay, ObjectType, AbstractType
 from graphene_django.types import DjangoObjectType
-
+from graphene_django.filter import DjangoFilterConnectionField
 
 from .models import Call, Agent
 
 
-class CallType(DjangoObjectType):
+class CallNode(DjangoObjectType):
     class Meta:
         model = Call
+        filter_fields = ['ucid', 'origin','destination','state']
+        interfaces = (relay.Node,)
         
         
-class AgentType(DjangoObjectType):
+class AgentNode(DjangoObjectType):
     class Meta:
         model = Agent
+        filter_fields = ['firstname', 'lastname', 'ext', 'phone_state','phone_active']
+        interfaces = (relay.Node,)
+
+
+class QueryCalls(object):
+    calls = relay.Node.Field(CallNode)
+    all_calls = DjangoFilterConnectionField(CallNode)
+
+
+class QueryAgents(object):
+    agents = graphene.List(AgentNode)
+    all_agents = DjangoFilterConnectionField(AgentNode)
         
 
-class Querycalls(graphene.ObjectType):
-    calls = graphene.List(CallType)
-    @graphene.resolve_only_args
-    def resolve_calls(self):
-        return Call.objects.all()
+   
 
-class Queryagents(graphene.ObjectType):
-    agents = graphene.List(AgentType)
-    @graphene.resolve_only_args
-    def resolve_agents(self):
-        return Agent.objects.all()
-
+    
 
 

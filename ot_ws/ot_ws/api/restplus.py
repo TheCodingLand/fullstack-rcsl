@@ -5,6 +5,8 @@ from flask_restplus import Api
 
 log = logging.getLogger(__name__)
 
+log.setLevel(logging.ERROR)
+
 api = Api(version='1.0', title='Omnitracker API',
           description='Omnitracker API for managing Events and Tickets')
 
