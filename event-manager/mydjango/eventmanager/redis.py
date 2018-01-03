@@ -17,22 +17,4 @@ class Redis(object):
         js = json.dumps(d)
         dataconn.lpush('agent', js)
         
-            
-            
-            
-        
-        
-     #          if item == "agent":
-   #         try:
-    #            agent=Agent.objects.get(ext=id)[0]
-    #            data = { 'id': randint(0,1000), 'text' : '%s' % agent.ext, 'timestamp':'31/12/2017' }
-    #            data= json.dumps(data)
-   #             dataconn.lpush(item, data)
-   #         except:
-   #             return True
-                
-            
-   #     if item == "call":
-    #        Call.objects.get(id=id)
-   #         data = { 'action' : 'setcaller', 'timestamp' : "%s" % self.timestamp, 'id' : self.id, 'data' : phone }
-    #        dataconn.lpush(item, data)
+    
