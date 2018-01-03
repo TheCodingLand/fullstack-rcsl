@@ -1,6 +1,5 @@
 import pytz
 
-from eventmanager.ot_services import ot_services
 from eventmanager.django_services import django_calls_services, django_agents_services
 from eventmanager.redis import Redis
 from datetime import datetime

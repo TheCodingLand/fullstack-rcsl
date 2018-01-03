@@ -11,18 +11,18 @@ class AgentAdmin(admin.ModelAdmin):
 
 
 class CallAdmin(admin.ModelAdmin):
-
-    list_display = ('ucid', 'state', 'isContactCenterCall', 'history',
-                    'end', 'origin')
+    list_display = ('ucid', 'state', 'isContactCenterCall', 'history', 'end', 'origin')
     list_filter = ('end', 'state', 'primaryagent')
 
-
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('ot_id', 'applicant', 'ticket')
+    list_filter = ('creationdate', 'responsible')
 			
 
 
 admin.site.register(Call, CallAdmin)
 admin.site.register(Agent, AgentAdmin)
-admin.site.register(Event)
+admin.site.register(Event, EventAdmin)
 admin.site.register(Transfer)
 admin.site.register(LoggedInUser)
 admin.site.register(ActiveCalls)

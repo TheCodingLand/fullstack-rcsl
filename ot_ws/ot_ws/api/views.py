@@ -52,6 +52,7 @@ class ObjectsMetadata(Resource):
             else:
                 response_object = {
                     'status': 'success',
+                    'id' : e.id,
                     'data': ot_object
                 }
                 return response_object, 200
@@ -176,7 +177,7 @@ class EventItem(Resource):
             else:
                 response_object = {
                     'status': 'success',
-                    'id' : e.id,
+                    'id' : result.id,
                     'data': event
                 }
                 return response_object, 200
@@ -218,7 +219,7 @@ class EventItem(Resource):
             else:
                 response_object = {
                     'status': 'success',
-                    'id' : e.id,
+                    'id' : result.id,
                     'data': event
                 }
                 return response_object, 200

@@ -4,9 +4,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 import django
 from django.core.exceptions import ObjectDoesNotExist
 django.setup()
-from eventmanager.ot_services import ot_services
+import json
 from graphqlendpoint.models import Agent, Event, Call, Transfer
-
+import requests
 from django.db import connection
 
 CENTRALE = ["571", "572", "573"]
@@ -41,19 +41,33 @@ class django_calls_services(object):
         return True
         
     def create_event(self, call):
-
+        print ("getting id")
         url = 'http://ot-ws:5000/api/ot/events/events/ucid/%s' % call.ucid
         #if call.event:
         #    if call.event.ot_id:
         #        url = 'http://ot-ws:5000/api/ot/events/events/%s' % call.event.ot_id
             #Event_ot = Event_OT()
-
+        
         resp = requests.get(url=url)
-        data = json.loads(resp.text) 
-        print (data.get('id'))
-        if call.event:
-            call.event.ot_id = data.get('id')
+        ot= json.loads(resp.text)
+        print (ot)
+        
+        if resp.status_code==404:
+            print ("create event in ot as is doesnt exist")
+            event = Event(creationdate = call.start, call=call)
+            event.save()
+            call.event = event
             call.save()
+        elif resp.status_code==200:
+            if ot['id'] !=0:
+                print (ot['id'])
+                event =Event.objects.get_or_create(ot_id=ot['id'])[0]
+                event.save()
+
+
+            if call.event:
+                call.event.ot_id = ot['id']
+                call.save()
     
     def transfer_call(self, id, timestamp, data):
         print("managing a transfer")

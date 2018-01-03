@@ -73,8 +73,9 @@ class serialize(object):
         
         self.res={ }
         self.metadata = { }
-        self.parse(xml)
         self.id =0
+        self.parse(xml)
+        
 
     def getFields(self,xml):
         
@@ -104,7 +105,8 @@ class serialize(object):
                     root = root[0]
                     self.id = root.attrib['id']
                     self.getFields(root)
-
+                    
+                    
                 else:
                     self.res = False
 
