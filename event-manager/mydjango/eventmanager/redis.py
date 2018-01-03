@@ -13,7 +13,7 @@ class Redis(object):
 
         pub.publish('agent', id)
         #push new state data to redis for frontend subscription
-        d = { 'id': id, 'text' : '%s' % data }
+        d = { 'id': id }
         js = json.dumps(d)
         dataconn.lpush('agent', js)
         

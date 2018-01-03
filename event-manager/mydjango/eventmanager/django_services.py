@@ -49,6 +49,7 @@ class django_calls_services(object):
             #Event_ot = Event_OT()
         
         resp = requests.get(url=url)
+
         ot= json.loads(resp.text)
         #print (ot)
         
@@ -57,6 +58,13 @@ class django_calls_services(object):
             event = Event(creationdate = call.start, call=call)
             event.save()
             call.event = event
+
+        print ("getting id")
+        ot=json.loads(resp.text)
+        print (ot.get('id'))
+
+        if call.event:
+            call.event.ot_id = ot.get('id')
             call.save()
         elif resp.status_code==200:
             if ot['id'] !=0:
