@@ -1,7 +1,15 @@
 version: '2.1'
 
 services:
- 
+ web:
+  build: ./frontend-react/
+  ports:
+    - "3000"
+  links:
+    - redis
+  expose:
+    - "3000"  
+    
  event-manager:
   restart: always
   build: ./event-manager/
@@ -25,10 +33,12 @@ services:
   build: ./nginx/
   ports:
     - "8099:80"
+    - "8098:8001"
   volumes_from:
     - event-manager
   links:
     - event-manager:event-manager
+    - web:web
 
  postgres:
   restart: always

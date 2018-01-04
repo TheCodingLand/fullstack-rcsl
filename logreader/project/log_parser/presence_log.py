@@ -12,6 +12,7 @@ class PresenceLog(LogLine):
             self.changeACDState()
             self.changeDeviceState()
             self.login()
+            self.logoff()
 
     def login(self):
         if self.isLoginIn():
@@ -69,12 +70,16 @@ class PresenceLog(LogLine):
 
 
     def isLoginIn(self):
-        if "TpsSUserPresence::OnEvent. Rcvd Client Logon Event for user with Key{" in self.line:
+        if "TpsSUserPresence::OnEvent. Rcvd Client Logon Event" in self.line:
             return True
-        elif "Cause{Media Logon},Extension{" in self.line and "Presence State:{Active}" in self.line:
+        elif "Cause{Media Logon},Extension{" in self.line:
             return True
         return False
     
     def isLoginOff(self):
-        return ",Cause{Media Logoff},Extension{" in self.line and ",Presence State:{Logoff}" in self.line
+        if "TpsSUserPresence::OnEvent. Rcvd Client Logoff" in self.line:
+            return True
+        elif "Cause{Media Logoff},Extension{" in self.line:
+            return True
+        return False
 # 1b70 TpsSUserPresence::SendEvent. UserMediaStateEvent:{ChangedMedia{Voice},UserId{107},Cause{Media Logon},Extension{534},MediaState:{Media{Voice},State{Logon},Cause{None},StartTime{2018/01/02 06:32:08.853}},Routing State:{State{Unavailable},Reason{0},Source{CTI Query}},Presence State:{Active},Presence State(ExDC):{Away},Affected Contact:{HandlingState{ContactId/RqC{4781514871127062/-1},State{Busy}}}}

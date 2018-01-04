@@ -97,7 +97,7 @@ class Services(object):
     
     def login(self):
         django = django_agents_services().login(self.id, self.data)
-        ot=True
+        
         
         return django
     

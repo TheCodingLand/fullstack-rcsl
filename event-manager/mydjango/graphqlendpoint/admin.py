@@ -7,12 +7,12 @@ from graphqlendpoint.models import Agent,Event, Call, Transfer,LoggedInUser, Act
         
 class AgentAdmin(admin.ModelAdmin):
 
-    list_display = ('ext', 'firstname', 'lastname', 'phone_login', 'phone_state', 'phone_active', 'active')
+    list_display = ('ext', 'firstname', 'lastname', 'phone_login', 'phone_state', 'phone_active', 'active', 'current_call')
 
 
 class CallAdmin(admin.ModelAdmin):
     list_display = ('ucid', 'state', 'isContactCenterCall', 'history', 'end', 'origin')
-    list_filter = ('end', 'state', 'primaryagent')
+    list_filter = ('end', 'state','current_agent')
 
 class EventAdmin(admin.ModelAdmin):
     list_display = ('ot_id', 'applicant', 'ticket')

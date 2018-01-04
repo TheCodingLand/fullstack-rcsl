@@ -3,7 +3,7 @@ from operator import itemgetter
 import time
 import pytz
 from datetime import datetime
-
+from operator import itemgetter
 from eventmanager import services
 
 
@@ -22,8 +22,35 @@ def getAddedCalls():
             
 #quick cleaup as this key is only used for real time data            
 
-    
+
+
+print("waiting for key to fill redis db")
+time.sleep(1)
+
+print ("Clearing Backlog")
+
+
+keyhashes = []
+keys = r.keys()    
+#print (keys)
+for key in keys:
+    try:    
+        k = r.hgetall(key)
+        k['key']=key
+        keyhashes.append(k)
+    except:
+        key.delete()
+
+newlist = sorted(keyhashes, key=itemgetter('timestamp')) 
+for item in newlist:
+    #print(item['timestamp'])
+    s = services.Services(item)
+    if s.done== True:
+        r.delete(item['key'])
+
+print("Normal Loop")
 while True:
+
     getAddedCalls()
     
 

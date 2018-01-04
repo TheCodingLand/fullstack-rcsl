@@ -55,27 +55,32 @@ class django_calls_services(object):
         
         if resp.status_code==404:
             #print ("create event in ot as is doesnt exist")
-            event = Event(creationdate = call.start, call=call)
+            event = Event(creationdate = call.start)
             event.save()
-            call.event = event
+            event.call = call
+            event.save()
+
 
         print ("getting id")
         ot=json.loads(resp.text)
         print (ot.get('id'))
-
-        if call.event:
+        
+        if hasattr(call, 'event'):
             call.event.ot_id = ot.get('id')
             call.save()
+        
         elif resp.status_code==200:
             if ot['id'] !=0:
                 #print (ot['id'])
                 event =Event.objects.get_or_create(ot_id=ot['id'])[0]
                 event.save()
+                call.event = event
+
+                if hasattr(call, 'event'):
+                    call.event.ot_id = ot['id']
+                    call.save()
 
 
-            if call.event:
-                call.event.ot_id = ot['id']
-                call.save()
     
     def transfer_call(self, id, timestamp, data):
         #print("managing a transfer")
@@ -87,7 +92,7 @@ class django_calls_services(object):
             self.create_event(call)
 
         
-        transfers = call.getTransfers().filter(timestamp=timestamp, destination = data)
+        transfers = call.getTransfers().filter(ttimestamp=timestamp, tdestination = data)
         #check if this exists already
         if len(transfers)>0:
             return True
@@ -98,26 +103,39 @@ class django_calls_services(object):
             else:
                 origin = call.destination
             
+        agents=Agent.objects.filter(ext=data)
+            
+        if len(agents) ==1:
+            agent=agents[0]
+            agent.current_call=None
+            agent.save()
+            agent.current_call=call
+            
+                
             
             if origin !=data:
-                t = Transfer(call=call, origin=origin, destination = data, timestamp = timestamp)
+                t = Transfer(call=call, torigin=origin, tdestination = data, ttimestamp = timestamp)
                 t.save()
-            call.updatehistory()
-            try:
-                agent=Agent.objects.get(ext=data)[0]
-                if agent.user in Groups.objects.get('name=helpdesk'):
-                    call.primaryagent = agent
-                    call.save()
-                
-            except:
-                pass
+            call.updatehistory()            
             call.destination = data
             call.save()
+            agent.save()
         return True
         
     def end(self, id, timestamp):
+        
         call = Call.objects.update_or_create(ucid=id)[0]
         call.end=timestamp
+        call.state="ended"
+        
+        agents=Agent.objects.filter(current_call=call)
+            
+        if len(agents) ==1:
+            agent=agents[0]
+            agent.current_call=None
+            agent.save()
+            
+            
         call.save()
         return True
     
@@ -133,6 +151,18 @@ class django_agents_services(object):
     
     def login(self, id, data):
         self.agent = Agent.objects.get_or_create(phone_login=id)[0]
+        
+        
+        #We need to remove the extention from the old login
+        agent_old = Agent.objects.filter(ext=data)
+        if len(agent_old) ==1:
+            if agent_old[0] != self.agent:
+                agent_old[0].ext = agent_old[0].phone_login
+                agent_old[0].phone_state=False
+                agent_old[0].save()
+                
+            
+        
         self.agent.phone_login = id
         print ("Agent loggin in with %s, ext %s" % (id,data))
         self.agent.phone_active=True
@@ -155,16 +185,7 @@ class django_agents_services(object):
         
     def linkcall(self, id, data):
         #print ("linkCall agent : %s, call %s" % (id, data))
-        try:
-            self.agent = Agent.objects.get(phone_login=id)
-            self.call = Call.objects.get(ucid=data)
-            self.call.primaryagent=(self.call)
-            self.agent.save()
-            self.call.save()
-           
-            return True
-        except:
-            pass
+
         redis= Redis().update('agent', id, data)
         return True
             
