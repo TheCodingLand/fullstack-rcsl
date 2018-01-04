@@ -135,7 +135,7 @@ class django_agents_services(object):
         self.agent = Agent.objects.get_or_create(phone_login=id)[0]
         self.agent.phone_login = id
         print ("Agent loggin in with %s, ext %s" % (id,data))
-        self.agent.active=True
+        self.agent.phone_active=True
         self.agent.ext = data
         self.agent.save()
         redis= Redis().update('agent', id, data)
@@ -183,7 +183,7 @@ class django_agents_services(object):
     def logoff(self, id, data):
         try:
             self.agent = Agent.objects.get(phone_login=id)
-            self.agent.active=True
+            self.agent.phone_active=False
             self.agent.save()
            
         except:

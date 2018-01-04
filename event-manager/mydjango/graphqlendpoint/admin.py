@@ -7,7 +7,7 @@ from graphqlendpoint.models import Agent,Event, Call, Transfer,LoggedInUser, Act
         
 class AgentAdmin(admin.ModelAdmin):
 
-    list_display = ('ext', 'firstname', 'lastname', 'phone_login', 'phone_state')
+    list_display = ('ext', 'firstname', 'lastname', 'phone_login', 'phone_state', 'phone_active', 'active')
 
 
 class CallAdmin(admin.ModelAdmin):

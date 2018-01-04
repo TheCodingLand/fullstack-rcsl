@@ -30,6 +30,10 @@ class PresenceLog(LogLine):
             AgentEvent(self.getUserId(), self.date).changeacdState(self.getAcdState())
         if self.getUnavailable():
             AgentEvent(self.getUserId(), self.date).changeacdState('ACDUNAVAIL')
+        if self.getAvailable():
+            AgentEvent(self.getUserId(), self.date).changeacdState('ACDAVAIL')
+        
+        
     
     def changeDeviceState(self):
         if self.getLineState():
@@ -48,7 +52,12 @@ class PresenceLog(LogLine):
         return state
         
     def getUnavailable(self):
-        state = r"TpsSUserPresence::OnEvent. Rcvd Agent ACDUNAVAIL Event for UserId{" in self.line
+        state = r"TpsSUserPresence::OnEvent. Rcvd Agent ACDUNAVAIL Event for UserId{" in self.line or "TpsSUserPresence::OnEvent. Rcvd Agent ACDUNAVAIL Event for UserId{" in self.line
+        return state
+    
+    def getAvailable(self):
+        state = r"TpsSUserPresence::OnEvent. Rcvd Agent ACDAVAIL Event for UserId{" in self.line or "TpsSUserPresence::OnEvent. Rcvd Agent ACDAVAIL Event for UserId{" in self.line
+        
         return state
         
     def getLineState(self):
@@ -57,8 +66,14 @@ class PresenceLog(LogLine):
     def getUcid(self):
         return self.search(r"HandlingState:\{ContactId/RqC\{(.*?)\/")
 
+
+
     def isLoginIn(self):
-        return "Cause{Media Logon},Extension{" in self.line and "Presence State:{Active}" in self.line
+        if "TpsSUserPresence::OnEvent. Rcvd Client Logon Event for user with Key{" in self.line:
+            return True
+        elif "Cause{Media Logon},Extension{" in self.line and "Presence State:{Active}" in self.line:
+            return True
+        return False
     
     def isLoginOff(self):
         return ",Cause{Media Logoff},Extension{" in self.line and ",Presence State:{Logoff}" in self.line
