@@ -55,21 +55,21 @@ class Call(models.Model):
 
 
 class Agent(models.Model):
-    firstname = models.CharField(max_length=200, null=True)
-    lastname = models.CharField(max_length=200, null=True)
-    active = models.BooleanField(default=False)
-    ot_userloginname = models.CharField(max_length=200, null=True)
+    firstname = models.CharField(max_length=200, null=True, blank=True)
+    lastname = models.CharField(max_length=200, null=True, blank=True)
+    active = models.BooleanField(default=True)
+    ot_userloginname = models.CharField(max_length=200, null=True, blank=True)
     ot_userdisplayname = models.CharField(max_length=200, null=True, blank=True)
-    ot_id = models.CharField(max_length=200,null=True)
-    user=models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
-    phone_login = models.CharField(max_length=200, null =True)
+    ot_id = models.CharField(max_length=200,null=True, blank=True)
+    user=models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
+    phone_login = models.CharField(max_length=200, null =True, blank=True)
     phone_active = models.BooleanField(default=False)
     ext = models.CharField(max_length=200, null=True, unique=True)
     phone_state = models.CharField(max_length=200, default = "available", blank=True)
     avatar = models.ImageField(upload_to='userimage',blank=True)
-    current_call = models.ForeignKey(Call,null=True, on_delete=models.SET_NULL, related_name='current_agent')
+    current_call = models.ForeignKey(Call,null=True, on_delete=models.SET_NULL, related_name='current_agent', blank=True)
     def __str__(self):
-        return "%s" % self.firstname
+        return "%s" % self.ext
         
 class Ticket(models.Model):
     creationdate = models.DateTimeField(null=True)

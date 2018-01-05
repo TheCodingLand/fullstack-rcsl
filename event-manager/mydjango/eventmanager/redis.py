@@ -2,7 +2,7 @@ import redis
 import json
 
 pub = redis.StrictRedis(host="redis", port=6379, db=3)
-dataconn = redis.StrictRedis(host="redis", port=6379, db=4)
+#dataconn = redis.StrictRedis(host="redis", port=6379, db=4)
 from graphqlendpoint.models import Agent, Event, Call, Transfer
 
 class Redis(object):
@@ -13,8 +13,8 @@ class Redis(object):
 
         pub.publish('agent', id)
         #push new state data to redis for frontend subscription
-        d = { 'id': id }
-        js = json.dumps(d)
-        dataconn.lpush('agent', js)
+        #d = { 'id': id }
+        #js = json.dumps(d)
+        #dataconn.lpush('agent', js)
         
     

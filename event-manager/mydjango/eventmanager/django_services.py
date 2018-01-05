@@ -21,12 +21,14 @@ class django_calls_services(object):
       
 
     def create_call(self, id, timestamp):
+        redis= Redis().update('agent', id, "createcall")
         call = Call.objects.get_or_create(ucid=id)[0]
         call.start=timestamp
         call.save()
         return True
     
     def set_caller(self, id, timestamp, data):
+        redis= Redis().update('agent', id, data)
         call = Call.objects.get_or_create(ucid=id)[0]
         call.origin=data
         call.save()
@@ -34,6 +36,7 @@ class django_calls_services(object):
         return True
     
     def update_details(self, id, timestamp, data):
+        redis= Redis().update('agent', id, data)
         call = Call.objects.get_or_create(ucid=id)[0]
         call.call_type=data
         call.save()
@@ -41,6 +44,7 @@ class django_calls_services(object):
         return True
         
     def create_event(self, call):
+    
         print ("getting id")
         url = 'http://ot-ws:5000/api/ot/events/events/ucid/%s' % call.ucid
         #if call.event:
@@ -84,7 +88,7 @@ class django_calls_services(object):
     
     def transfer_call(self, id, timestamp, data):
         #print("managing a transfer")
-        
+        redis= Redis().update('agent', id, data)
         call = Call.objects.get_or_create(ucid=id)[0]
         if data in CENTRALE:
             call.isContactCenterCall=True
@@ -123,17 +127,17 @@ class django_calls_services(object):
         return True
         
     def end(self, id, timestamp):
-        
+        redis= Redis().update('agent', id, "endcall")
         call = Call.objects.update_or_create(ucid=id)[0]
         call.end=timestamp
         call.state="ended"
         
         agents=Agent.objects.filter(current_call=call)
             
-        if len(agents) ==1:
-            agent=agents[0]
-            agent.current_call=None
-            agent.save()
+        if len(agents) >0:
+            for agent in agents:
+                agent.current_call=None
+                agent.save()
             
             
         call.save()
@@ -150,28 +154,34 @@ class django_agents_services(object):
         connection.close()
     
     def login(self, id, data):
+        
         self.agent = Agent.objects.get_or_create(phone_login=id)[0]
-        
-        
-        #We need to remove the extention from the old login
-        agent_old = Agent.objects.filter(ext=data)
-        if len(agent_old) ==1:
-            if agent_old[0] != self.agent:
-                agent_old[0].ext = agent_old[0].phone_login
-                agent_old[0].phone_state=False
-                agent_old[0].save()
-                
-            
-        
-        self.agent.phone_login = id
-        print ("Agent loggin in with %s, ext %s" % (id,data))
         self.agent.phone_active=True
+
         self.agent.ext = data
         self.agent.save()
-        redis= Redis().update('agent', id, data)
+        
+        
+        if data !=False:
+            if data != ext:
+                #We need to remove the extention from the old login
+                agent_old = Agent.objects.filter(ext=self.agent.ext)        
+
+        
+                if len(agent_old) ==1:
+                    if agent_old[0] != self.agent:
+                        agent_old[0].ext = agent_old[0].phone_login
+                        agent_old[0].phone_state=False
+                        agent_old[0].save()
+                        agent.ext=data
+
+                        agent.save()   
+    
+        edis= Redis().update('agent', id, data)
         return True
         
     def changeACDstate(self, id, data):
+        redis= Redis().update('agent', id, data)
         try:
             self.agent = Agent.objects.get(phone_login=id)
             self.agent.phone_state=data
@@ -191,6 +201,8 @@ class django_agents_services(object):
             
     
     def changeDeviceState(self, id, data):
+        redis= Redis().update('agent', id, data)
+        redis= Redis().update('agent', id, data)
         try:   
             self.agent = Agent.objects.get(phone_login=id)
             self.agent.device_state=data
@@ -202,9 +214,11 @@ class django_agents_services(object):
         return True
      
     def logoff(self, id, data):
+        redis= Redis().update('agent', id, data)
         try:
             self.agent = Agent.objects.get(phone_login=id)
             self.agent.phone_active=False
+
             self.agent.save()
            
         except:

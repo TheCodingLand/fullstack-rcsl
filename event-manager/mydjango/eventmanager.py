@@ -25,7 +25,7 @@ def getAddedCalls():
 
 
 print("waiting for key to fill redis db")
-time.sleep(1)
+time.sleep(60)
 
 print ("Clearing Backlog")
 

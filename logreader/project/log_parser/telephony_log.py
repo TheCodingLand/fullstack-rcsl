@@ -44,7 +44,7 @@ class TelephonyLog(LogLine):
         return self.search(r"UCID<(.*?)>")
 
     def getCalling(self):
-        return self.search(r"CallingDID:(.*?)\(S\)")
+        return self.search(r"CallingDID:([0-9]+)\(S\)")
     
     def getAnswerExt(self):
         return self.search(r"AnswerDID:(.*?)\(S\)")

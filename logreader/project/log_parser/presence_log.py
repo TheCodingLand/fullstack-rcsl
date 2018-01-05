@@ -34,7 +34,6 @@ class PresenceLog(LogLine):
         if self.getAvailable():
             AgentEvent(self.getUserId(), self.date).changeacdState('ACDAVAIL')
         
-        
     
     def changeDeviceState(self):
         if self.getLineState():
@@ -72,12 +71,16 @@ class PresenceLog(LogLine):
     def isLoginIn(self):
         if "TpsSUserPresence::OnEvent. Rcvd Client Logon Event" in self.line:
             return True
+        elif "Cause{Desktop Logon}" in self.line:
+            return True
         elif "Cause{Media Logon},Extension{" in self.line:
             return True
         return False
     
     def isLoginOff(self):
-        if "TpsSUserPresence::OnEvent. Rcvd Client Logoff" in self.line:
+        if "SActiveAgent::Logoff." in self.line:
+            return True
+        elif "TpsSUserPresence::OnEvent. Rcvd Client Logoff" in self.line:
             return True
         elif "Cause{Media Logoff},Extension{" in self.line:
             return True
